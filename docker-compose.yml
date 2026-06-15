@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: bubble-tea-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: bubble-tea-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/bubble-tea-shop
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    container_name: bubble-tea-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
